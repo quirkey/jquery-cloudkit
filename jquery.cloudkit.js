@@ -59,7 +59,7 @@
       $.ajax({
         type: 'PUT',
         url: meta.uri,
-        data: JSON.stringify(spec),
+        data: JSON.stringify($.extend(json,spec)),
         contentType: 'application/json',
         dataType: 'json',
         beforeSend: function(xhr) {
@@ -117,7 +117,22 @@
 
     that.isDeleted = function() {
       return (meta.deleted == true);
-    }
+    };
+    
+    that.attr = function(name, value) {
+      if (typeof json[name] != 'undefined') {
+        switch(typeof value) {
+          case 'undefined':
+            return json[name]; break;
+          case 'function':
+            return json[name] = value.apply(json[name]); break;
+          default:
+            return json[name] = value;
+        }
+      } else if (typeof meta[name] != 'undefined') {
+        return meta[name];
+      }
+    };
 
     return that;
   };
